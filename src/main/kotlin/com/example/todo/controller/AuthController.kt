@@ -2,17 +2,17 @@ package com.example.todo.controller
 
 import com.example.todo.DTO.AuthenticationRequest
 import com.example.todo.DTO.AuthenticationResponse
+import com.example.todo.model.Role
 import com.example.todo.model.User
 import com.example.todo.security.JwtUtils
 import com.example.todo.service.UserService
 import jakarta.validation.Valid
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
-import org.springframework.security.core.authority.SimpleGrantedAuthority
+import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -22,17 +22,18 @@ import java.util.*
 
 @RestController
 @RequestMapping("/api/auth")
-class AuthController(@Autowired val service: UserService,
-                     @Autowired val manager: AuthenticationManager,
-                     @Autowired val jwt: JwtUtils,
-                     @Autowired val encoder: PasswordEncoder
+class AuthController(val service: UserService,
+                     val userDetailsService: UserDetailsService,
+                     val manager: AuthenticationManager,
+                     val jwt: JwtUtils,
+                     val encoder: PasswordEncoder
     ) {
 
     @PostMapping("/authenticate")
     fun createToken(@RequestBody @Valid request: AuthenticationRequest): ResponseEntity<AuthenticationResponse> {
         return try {
             manager.authenticate(UsernamePasswordAuthenticationToken(request.username, request.password))
-            val user = service.loadUserByUsername(request.username)
+            val user = userDetailsService.loadUserByUsername(request.username)
             val token = jwt.generateToken(user)
 
             ResponseEntity.ok(AuthenticationResponse(token))
@@ -47,7 +48,7 @@ class AuthController(@Autowired val service: UserService,
             throw RuntimeException("The email is already registered")
         }
         val hashPassword = encoder.encode(newUser.password)
-        val userDetails = service.saveNewUser(User(newUser.username, hashPassword, Collections.singleton(SimpleGrantedAuthority("user"))))
+        val userDetails = service.saveNewUser(User(newUser.username, hashPassword, Role.ROLE_USER))
 
         return ResponseEntity.status(HttpStatus.CREATED).body(AuthenticationResponse(jwt.generateToken(userDetails)))
     }

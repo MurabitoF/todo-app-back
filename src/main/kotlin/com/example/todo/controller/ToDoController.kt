@@ -5,9 +5,7 @@ import com.example.todo.model.ToDo
 import com.example.todo.service.ToDoListService
 import com.example.todo.service.ToDoService
 import jakarta.validation.Valid
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
-import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -18,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/api/todo")
-class ToDoController(@Autowired val toDoService: ToDoService, @Autowired val listService: ToDoListService) {
+class ToDoController(val toDoService: ToDoService, val listService: ToDoListService) {
 
     @PostMapping("")
     fun saveNewToDo(@Valid @RequestBody todo: ToDoDTO): ResponseEntity<ToDo> {

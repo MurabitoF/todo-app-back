@@ -1,24 +1,28 @@
 package com.example.todo.model
 
-import jakarta.persistence.Column
-import jakarta.persistence.Entity
-import jakarta.persistence.GeneratedValue
-import jakarta.persistence.GenerationType
-import jakarta.persistence.Id
+import com.fasterxml.jackson.annotation.JsonIgnore
+import jakarta.persistence.*
 import org.springframework.data.annotation.CreatedDate
-import org.springframework.security.core.GrantedAuthority
+import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
 import java.time.LocalDateTime
 
 @Entity
+@Table(name = "users")
 data class User(
     @Column(nullable = false, unique = true)
     private val username: String,
 
     @Column(nullable = false)
+    @JsonIgnore
     private val password: String,
 
-    private val authorities: MutableCollection<GrantedAuthority>,
+    @Enumerated(EnumType.STRING)
+    val role: Role,
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "user", cascade = [CascadeType.REMOVE], orphanRemoval = true, fetch = FetchType.LAZY)
+    val list: List<ToDoList>? = listOf(),
 
     @CreatedDate
     val createdDate: LocalDateTime? = LocalDateTime.now(),
@@ -28,7 +32,7 @@ data class User(
     val id: Int? = 0
 ) : UserDetails {
 
-    override fun getAuthorities() = authorities
+    override fun getAuthorities() = listOf(SimpleGrantedAuthority(role.name))
     override fun getPassword() = password
     override fun getUsername() = username
     override fun isAccountNonExpired() = true

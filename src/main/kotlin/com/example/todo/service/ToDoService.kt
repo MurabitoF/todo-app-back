@@ -2,11 +2,10 @@ package com.example.todo.service
 
 import com.example.todo.model.ToDo
 import com.example.todo.repository.ToDoRepository
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
 @Service
-class ToDoService(@Autowired val repo: ToDoRepository) {
+class ToDoService(val repo: ToDoRepository) {
 
     fun getAllByList(listId: Int): MutableList<ToDo> {
         return repo.findAllByToDoList(listId)

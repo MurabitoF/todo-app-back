@@ -1,23 +1,24 @@
 package com.example.todo.service
 
 import com.example.todo.model.ToDoList
+import com.example.todo.model.User
 import com.example.todo.repository.ToDoListRepository
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import java.lang.RuntimeException
 
 @Service
-class ToDoListService(@Autowired val repo: ToDoListRepository) {
+class ToDoListService(val repo: ToDoListRepository) {
 
-    fun getAll(): MutableList<ToDoList> {
-        return repo.findAll()
+    fun getAll(user: User): MutableList<ToDoList> {
+        return repo.findAllByUser(user)
     }
 
     fun getById(id: Int): ToDoList {
         return repo.findListById(id) ?: throw RuntimeException("To Do List not found!")
     }
 
-    fun saveNewList(list: ToDoList): ToDoList {
+    fun saveNewList(list: ToDoList, user: User): ToDoList {
+        list.user = user
         return repo.save(list)
     }
 

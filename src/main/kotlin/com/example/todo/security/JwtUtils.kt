@@ -11,13 +11,13 @@ import java.util.Date
 @Component
 class JwtUtils {
     private val JWT_KEY: String = "K31.p4R4.Jw7"
-    private val EXPIRATION_DATE = Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10)
+    private val EXPIRATION_DATE = 36000000
 
     fun generateToken(userDetails: UserDetails): String {
         return Jwts.builder()
             .setSubject(userDetails.username)
             .setIssuedAt(Date())
-            .setExpiration(EXPIRATION_DATE)
+            .setExpiration(Date(Date().time + EXPIRATION_DATE))
             .signWith(SignatureAlgorithm.HS256, JWT_KEY)
             .compact()
     }
@@ -26,15 +26,9 @@ class JwtUtils {
         return userDetails.username.equals(extractUsername(token)) && !isTokenExpired(token)
     }
 
-    fun extractUsername(token: String): String {
-        return getClaims(token).subject
-    }
+    fun extractUsername(token: String): String = getClaims(token).subject
 
-    fun isTokenExpired(token: String): Boolean {
-        return getClaims(token).expiration.before(Date())
-    }
+    fun isTokenExpired(token: String): Boolean = getClaims(token).expiration.before(Date())
 
-    fun getClaims(token: String): Claims {
-        return Jwts.parser().setSigningKey(JWT_KEY).parseClaimsJws(token).body
-    }
+    fun getClaims(token: String): Claims = Jwts.parser().setSigningKey(JWT_KEY).parseClaimsJws(token).body
 }
