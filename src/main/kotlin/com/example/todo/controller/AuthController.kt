@@ -42,6 +42,14 @@ class AuthController(val service: UserService,
         }
     }
 
+    @PostMapping("/validate")
+    fun validateToken(@RequestBody token: String): ResponseEntity<Boolean> {
+        val tokenUser = jwt.extractUsername(token)
+        val user = userDetailsService.loadUserByUsername(tokenUser)
+        val isValid = jwt.validateToken(token, user)
+        return ResponseEntity.ok(isValid)
+    }
+
     @PostMapping("/register")
     fun registerUser(@RequestBody newUser: AuthenticationRequest): ResponseEntity<AuthenticationResponse> {
         if (service.usernameExist(newUser.username)){

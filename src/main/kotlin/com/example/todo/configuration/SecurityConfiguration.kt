@@ -14,6 +14,7 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher
 import org.springframework.web.cors.CorsConfiguration
 import org.springframework.web.cors.CorsConfigurationSource
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource
+import kotlin.contracts.contract
 
 @Configuration
 @EnableWebSecurity
@@ -22,6 +23,8 @@ class SecurityConfiguration(val jwtFilterRequest: JwtFilterRequest, val authProv
     @Bean
     fun filterChain(http: HttpSecurity): SecurityFilterChain {
         http.csrf().disable()
+            .cors().configurationSource(corsConfigurationSource())
+            .and()
             .authorizeHttpRequests()
             .requestMatchers(AntPathRequestMatcher("/api/auth/**", HttpMethod.POST.toString()))
             .permitAll()
