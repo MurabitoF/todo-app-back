@@ -17,6 +17,7 @@ data class ToDo(
     @JoinColumn(name = "list_id")
     @JsonIgnore()
     val toDoList: ToDoList,
+    @JsonIgnore
     @CreatedDate
     val createdDate: LocalDateTime? = LocalDateTime.now(),
     @Id

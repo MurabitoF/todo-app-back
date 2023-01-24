@@ -44,11 +44,10 @@ class AuthController(val service: UserService,
 
     @PostMapping("/validate")
     fun validateToken(@RequestBody token: String): ResponseEntity<Boolean> {
-        val cleanedToken = token.substring(1, token.length -1)
-        if(cleanedToken.trim() == "") return ResponseEntity.ok(false)
-        val tokenUser = jwt.extractUsername(cleanedToken)
+        if(token.trim() == "") return ResponseEntity.ok(false)
+        val tokenUser = jwt.extractUsername(token)
         val user = userDetailsService.loadUserByUsername(tokenUser)
-        val isValid = jwt.validateToken(cleanedToken, user)
+        val isValid = jwt.validateToken(token, user)
         return ResponseEntity.ok(isValid)
     }
 
