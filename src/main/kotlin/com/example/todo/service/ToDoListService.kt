@@ -1,5 +1,6 @@
 package com.example.todo.service
 
+import com.example.todo.DTO.ToDoListDTO
 import com.example.todo.model.ToDoList
 import com.example.todo.model.User
 import com.example.todo.repository.ToDoListRepository
@@ -22,7 +23,7 @@ class ToDoListService(val repo: ToDoListRepository) {
         return repo.save(list)
     }
 
-    fun updateTitle(id: Int,updatedList: ToDoList): ToDoList {
+    fun updateTitle(id: Int,updatedList: ToDoListDTO): ToDoList {
         val oldList = this.getById(id)
         oldList.title = updatedList.title
 

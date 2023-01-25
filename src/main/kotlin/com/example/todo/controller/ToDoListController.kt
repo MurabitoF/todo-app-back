@@ -1,8 +1,10 @@
 package com.example.todo.controller
 
+import com.example.todo.DTO.ToDoListDTO
 import com.example.todo.model.ToDoList
 import com.example.todo.model.User
 import com.example.todo.service.ToDoListService
+import jakarta.validation.Valid
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.validation.annotation.Validated
@@ -24,7 +26,7 @@ class ToDoListController(val service: ToDoListService) {
     }
 
     @PutMapping("/{id}")
-    fun updateList(@PathVariable id: Int, @RequestBody @Validated list: ToDoList): ResponseEntity<ToDoList> {
+    fun updateList(@PathVariable id: Int, @RequestBody @Valid list: ToDoListDTO): ResponseEntity<ToDoList> {
         return ResponseEntity.ok(service.updateTitle(id, list))
     }
 

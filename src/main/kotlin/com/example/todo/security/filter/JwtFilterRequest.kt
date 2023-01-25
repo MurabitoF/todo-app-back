@@ -22,8 +22,8 @@ class JwtFilterRequest(val jwtUtils: JwtUtils,
     ) {
         val authorizationHeader = request.getHeader("Authorization")
 
-        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer")){
-            val jwt = authorizationHeader.removePrefix("Bearer ")
+        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")){
+            val jwt = authorizationHeader.substring(7)
             val username = jwtUtils.extractUsername(jwt)
 
 
